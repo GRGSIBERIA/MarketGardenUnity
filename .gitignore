@@ -40,3 +40,6 @@ MarketGarden/Assets/Textures/topography.png
 MarketGarden/Assets/Textures/basemap.png
 *.log
 *.tif
+MarketGarden/Assets/Textures/basemap.tif.meta
+MarketGarden/Assets/Textures/bathymetry.png.meta
+MarketGarden/Assets/Textures/topography.png.meta
