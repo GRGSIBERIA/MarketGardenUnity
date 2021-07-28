@@ -5,9 +5,9 @@ using UnityEditor;
 
 public class GeometryGenerator : EditorWindow
 {
-    Texture basemap;
-    Texture bathymetry;
-    Texture topography;
+    Texture2D basemap;
+    Texture2D bathymetry;
+    Texture2D topography;
 
     [MenuItem("Generator/Geometry")]
     static void Generate()
@@ -35,34 +35,38 @@ public class GeometryGenerator : EditorWindow
             return;
         }
 
-        int vtx_count = basemap.height * basemap.width * 4;
+        int vtx_count = basemap.height * basemap.width;
         float dtheta = (2f * Mathf.PI) / basemap.width;
         Vector3[] vertices = new Vector3[vtx_count];
+        Color[] colors = new Color[vtx_count];
+        Vector3[] normals = new Vector3[vtx_count];
         const float round_length = 40075f;
         // round_length = diameter * PI
         // round_length / PI = 2f * radius
         // round_length / 2f * PI = radius
         const float radius = round_length / (2f * Mathf.PI);
-        
 
         for (int h = 0; h < basemap.height; ++h)
         {
             for (int w = 0; w < basemap.width; ++w)
             {
-                int idx = h * basemap.height + w * 4;
-                vertices[idx + 0] = new Vector3();
-                vertices[idx + 1] = new Vector3();
-                vertices[idx + 2] = new Vector3();
-                vertices[idx + 3] = new Vector3();
+                int idx = h * basemap.height + w;
+                float xsin = Mathf.Sin(dtheta * w);
+                float ycos = Mathf.Cos(dtheta * w);
+                float x = xsin * radius;
+                float z = ycos * radius;
+                vertices[idx] = new Vector3(x, h, z);
+                colors[idx] = basemap.GetPixel(w, h);
+                normals[idx] = new Vector3(x, 0, z);
             }
         }
     }
 
     private void OnGUI()
     {
-        basemap = (Texture)EditorGUILayout.ObjectField("Basemap", basemap, typeof(Texture), true);
-        topography = (Texture)EditorGUILayout.ObjectField("Topography", topography, typeof(Texture), true);
-        bathymetry = (Texture)EditorGUILayout.ObjectField("Bathymetry", bathymetry, typeof(Texture), true);
+        basemap = (Texture2D)EditorGUILayout.ObjectField("Basemap", basemap, typeof(Texture2D), true);
+        topography = (Texture2D)EditorGUILayout.ObjectField("Topography", topography, typeof(Texture2D), true);
+        bathymetry = (Texture2D)EditorGUILayout.ObjectField("Bathymetry", bathymetry, typeof(Texture2D), true);
 
         if (GUILayout.Button("Generate"))
         {
